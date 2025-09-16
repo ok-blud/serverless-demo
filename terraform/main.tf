@@ -29,7 +29,6 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-# ✅ Reference an existing DynamoDB table instead of creating it
 data "aws_dynamodb_table" "contacts" {
   name = "contacts"
 }
@@ -145,5 +144,7 @@ resource "aws_lambda_permission" "allow_apigw_contact" {
   statement_id  = "AllowExecutionFromAPIGatewayContact"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.api.function_name
-  principal
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*/contact"
+}
 
