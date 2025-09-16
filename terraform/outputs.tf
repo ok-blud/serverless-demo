@@ -1,5 +1,5 @@
 output "api_id" {
-  value = data.aws_api_gateway_rest_api.api.id
+  value = aws_api_gateway_rest_api.api.id
 }
 
 output "lambda_env_table_name" {

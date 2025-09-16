@@ -29,6 +29,11 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
+# ✅ Reference an existing DynamoDB table instead of creating it
+data "aws_dynamodb_table" "contacts" {
+  name = "contacts"
+}
+
 resource "aws_lambda_function" "api" {
   function_name = "hello-api"
   handler       = "handler.handler"
@@ -37,15 +42,12 @@ resource "aws_lambda_function" "api" {
   filename      = "lambda.zip"
   source_code_hash = filebase64sha256("lambda.zip")
   timeout       = 15
+
   environment {
     variables = {
       TABLE_NAME = data.aws_dynamodb_table.contacts.name
     }
   }
-}
-
-resource "aws_dynamodb_table" "contacts" {
-  name         = "contacts"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
@@ -143,6 +145,5 @@ resource "aws_lambda_permission" "allow_apigw_contact" {
   statement_id  = "AllowExecutionFromAPIGatewayContact"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.api.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*/contact"
-}
+  principal
+
